@@ -1,0 +1,11 @@
+bin:
+  intellij: /home/chris/bin/idea-IC-171.3780.107/bin/idea.sh
+  pycharm: /home/chris/bin/pycharm-community-2016.3.2/bin/pycharm.sh
+
+commands:
+  -
+    name: "Intellij java project 1"
+    command: intellij /path/to/java/project1/
+  -
+    name: "Pycharm python project 1"
+    command: pycharm /path/to/python/project1/
