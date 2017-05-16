@@ -13,6 +13,7 @@ import sys
 import yaml
 import os
 import subprocess
+import re
 
 KEY_ESC=65307
 KEY_ENTER=65293
@@ -40,10 +41,11 @@ class KwikMenu(Gtk.Window):
         self.buttonDict = {}
         self.commandDict = {}
         index = 0
-        for i in data:
+        for i in data['commands']:
             button = Gtk.ToggleButton(i['name'])
             self.buttonDict[index] = button
-            self.commandDict[index] = i['command']
+            self.commandDict[index] = self.build_command(data['bin'],i['command'])
+            print("bin > "+self.commandDict[index] )
             index += 1
         # Activation des bouton au démarrage
         self.selected = 0
@@ -80,6 +82,16 @@ class KwikMenu(Gtk.Window):
         print(pid)
         Gtk.main_quit()
 
+    def build_command(self,binaries,command):
+        try:
+            m = re.search('([^\s]+)(.*)', command)
+            if(m.group(1) in binaries.keys()):
+                return str(binaries[m.group(1)]) + " " + str(m.group(2))
+        except:
+            pass
+
+        return command
+
 
 def main(argv):
     configfile = os.getenv("HOME") + "/.kwikmenu.yaml"
@@ -93,20 +105,21 @@ def main(argv):
 
     def gtk_style():
         css = b"""
-/*
-* {
-    transition-property: color, background-color, border-color, background-image, padding, border-width;
-    transition-duration: 1s;
-    font: Cantarell 20px;
-}*/
 
 .button {
-    color: black;
-    background-color: #bbb;
-    border-style: solid;
+
+    border-style: none;
+    border-radius: 30px;
     border-width: 2px 0 2px 2px;
-    border-color: #333;
     padding: 12px 4px;
+}
+
+.button > #title-label {
+    font: Sans 30
+}
+
+GtkButton:active {
+    background-color: red;
 }
 
         """
@@ -127,5 +140,3 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv)
-
-# # TODO empecher les instances multiples
